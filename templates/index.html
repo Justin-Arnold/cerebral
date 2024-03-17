@@ -5,7 +5,16 @@
         <meta charset="UTF-8">
         <title>Cerebral</title>
     </head>
-    <body class="h-screen w-screen bg-slate-800 grid place-items-center text-white text-5xl font-bold">
-        Hello World
+    <body class="h-screen w-screen bg-slate-800 flex flex-col">
+        <!-- Top Bar -->
+        <div class="h-12 bg-slate-600 px-4 flex items-center">
+            <h2 class="text-white text-xl font-bold">Cerebral</h2>
+        </div>
+        <div class="h-full grow grid place-items-center">
+            <div class="bg-slate-700 h-80 w-[400px] rounded p-4 flex flex-col items-center justify-center gap-2">
+                <p class="max-w-60 text-center text-lg">It looks like you haven't added any services. Click the button below to begin.</p>
+                <button class="p-2 bg-slate-900 text-slate-100 rounded active:scale-90">Add Service</button>
+            </div>
+        </div>
     </body>
 </html>
