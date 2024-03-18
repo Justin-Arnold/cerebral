@@ -33,6 +33,26 @@ func main() {
 		tmpl.Execute(w, data)
 	})
 
+	http.HandleFunc("/add-service", func(rw http.ResponseWriter, req *http.Request) {
+		err := req.ParseForm() // Parses the form data
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		name := req.FormValue("name") // Access the "name" field
+		url := req.FormValue("url")   // Access the "url" field
+
+		tmpl := template.Must(template.ParseFiles("./templates/fragments/services.html"))
+		data, err := config.UpdateConfig("config.toml", name, url)
+
+		log.Print(data)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		tmpl.Execute(rw, data)
+	})
+
 	log.Println("Cerebral running on localhost:" + port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }

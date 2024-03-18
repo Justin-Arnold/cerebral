@@ -2,16 +2,39 @@
     <head>
         <script src="https://unpkg.com/htmx.org@1.9.6"></script>
         <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
         <meta charset="UTF-8">
         <title>Cerebral</title>
     </head>
     <body class="h-screen w-screen bg-[url('/static/wallpaper.jpg')] bg-cover flex flex-col backdrop-blur-sm">
         <!-- Top Bar -->
-        <div class="h-12 bg-slate-600 px-4 flex items-center">
+        <div class="h-12 bg-slate-600 px-4 flex items-center justify-between">
             <h2 class="text-white text-xl font-bold">Cerebral</h2>
+            <button _="
+                on click set dialog to the next <dialog/>
+                if dialog does not match @open
+                    call dialog.showModal()
+                end"
+            >Add</button>
+            <dialog class="p-2 bg-slate-600/80 rounded-lg">
+                <form
+                hx-post="/add-service"
+                hx-target="#services"
+                class="flex flex-col gap-2">
+                    <label class="flex flex-col p-1 text-white">
+                        Name
+                        <input name="name" class="rounded bg-slate-100 text-black p-1"/>
+                    </label>
+                    <label class="flex flex-col p-1 text-white">
+                        URL
+                        <input name="url" class="rounded bg-slate-100 text-black p-1"/>
+                    </label>
+                    <button type="submit" class="bg-slate-800 text-white rounded p-1">submit</button>
+                </form>
+            </dialog>
         </div>
-        <div class="h-full grow p-4">
-            <div hx-get="/services" hx-trigger="load" hx-swap="outerHTML" class="bg-slate-700 h-80 w-[400px] rounded p-4 flex flex-col items-center justify-center gap-2">
+        <div id="services" hx-get="/services" hx-trigger="load" class="h-full grow p-4">
+            <div class="bg-slate-700 h-80 w-[400px] rounded p-4 flex flex-col items-center justify-center gap-2">
                 <p class="max-w-60 text-center text-lg">It looks like you haven't added any services. Click the button below to begin.</p>
                 <button class="p-2 bg-slate-900 text-slate-100 rounded active:scale-90">Add Service</button>
             </div>
