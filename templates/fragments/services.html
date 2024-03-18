@@ -1,8 +1,7 @@
 <div class="h-full w-full grid grid-flow-col auto-cols-min gap-4">
     {{ range .Services }} 
-    <a class="p-4 rounded-lg bg-slate-600/80 h-40 w-[200px]" href={{.URL}} target="_blank">
-        Name: {{ .Name }} <br>
-        URL: {{ .URL }}
+    <a class="p-4 rounded-lg bg-slate-600/80 h-40 w-[200px] flex flex-col justify-end items-center" href={{.URL}} target="_blank">
+        <p class="text-white text-xl font-semibold">{{ .Name }}</p>
     </a>
     {{ end }} 
 </div>
