@@ -1,0 +1,8 @@
+[[services]]
+  name = "trueNAS"
+  url = "10.0.0.20"
+
+[[services]]
+  name = "Proxmox"
+  url = "https://10.0.0.158:8006"
+
