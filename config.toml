@@ -13,15 +13,3 @@
 [[services]]
   name = "qBittorrent"
   url = "http://10.0.0.66:8090/"
-
-[[services]]
-  name = "qBittorrent"
-  url = "http://10.0.0.66:8090/"
-
-[[services]]
-  name = "t"
-  url = "t"
-
-[[services]]
-  name = "s"
-  url = "s"
