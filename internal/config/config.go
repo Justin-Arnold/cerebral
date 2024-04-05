@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"slices"
 
 	"github.com/BurntSushi/toml"
 )
@@ -46,6 +47,43 @@ func UpdateConfig(filename, name, url string) (*Config, error) {
 	defer file.Close()
 
 	// 5. Encode and write the updated configuration directly
+	encoder := toml.NewEncoder(file)
+	err = encoder.Encode(config)
+	if err != nil {
+		return nil, err
+	}
+
+	return config, nil
+}
+
+func EditServiceInConfig(oldName string, name string, url string) (*Config, error) {
+	// Load in current config
+	config, configError := LoadConfig("config.toml")
+	if configError != nil {
+		return nil, configError
+	}
+
+	// Get matching service
+	serviceIndex := slices.IndexFunc(config.Services, func(service Service) bool { return service.Name == oldName })
+	if serviceIndex == -1 {
+		return nil, nil
+	}
+
+	// Update Existing Service Info
+	updatedService := config.Services[serviceIndex]
+	updatedService.Name = name
+	updatedService.URL = url
+
+	config.Services[serviceIndex] = updatedService
+
+	// Open the file in write mode (overwriting existing content)
+	file, err := os.OpenFile("config.toml", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	// Encode and write the updated configuration directly
 	encoder := toml.NewEncoder(file)
 	err = encoder.Encode(config)
 	if err != nil {

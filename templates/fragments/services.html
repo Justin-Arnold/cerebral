@@ -11,8 +11,27 @@
         end"
         >⚙︎</span>
     </a>
-    <dialog id="editDialog" class="p-2 bg-slate-200 rounded-lg w-80 z-[999]">
-        {{.Name}}
+    <dialog id="editDialog{{.Name}}" class="p-4 bg-slate-600/80 rounded-lg w-80 z-[999] text-white space-y-4">
+        <h3 class="text-lg">Edit Service</h3>
+        <form 
+            hx-post="/edit-service"
+            hx-target="#services"
+            class="flex flex-col gap-2"
+        >   
+            <input class="hidden" name="oldName" value="{{.Name}}">
+            <label class="flex flex-col gap-1 text-sm">
+                Name
+                <input name="name" value={{.Name}} class="text-black rounded p-1"/>
+            </label>
+            <label class="flex flex-col gap-1 text-sm">
+                URL
+                <input name="url" value={{.URL}} class="text-black rounded p-1"/>
+            </label>
+            <div class="flex gap-2 items-center justify-center">
+                <button type="button" _="on click set dialog to #editDialog{{.Name}} then call dialog.close()" class="rounded bg-slate-800 mt-4 p-1 flex-1">Cancel</button>
+                <button type="submit" _="on click set dialog to #editDialog{{.Name}} then call dialog.close()" class="rounded bg-slate-900 mt-4 p-1 flex-1">Save</button>
+            </div>
+        </form>
     </dialog>
     {{ end }} 
 </div>

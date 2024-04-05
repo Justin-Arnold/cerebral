@@ -45,12 +45,31 @@ func main() {
 		tmpl := template.Must(template.ParseFiles("./templates/fragments/services.html"))
 		data, err := config.UpdateConfig("config.toml", name, url)
 
-		log.Print(data)
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		tmpl.Execute(rw, data)
+	})
+
+	http.HandleFunc("/edit-service", func(rw http.ResponseWriter, req *http.Request) {
+		err := req.ParseForm()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		oldName := req.FormValue("oldName")
+		name := req.FormValue("name")
+		url := req.FormValue("url")
+
+		template := template.Must(template.ParseFiles("./templates/fragments/services.html"))
+		data, editError := config.EditServiceInConfig(oldName, name, url)
+		if editError != nil {
+			log.Fatal(editError)
+		}
+
+		template.Execute(rw, data)
+
 	})
 
 	log.Println("Cerebral running on localhost:" + port)
