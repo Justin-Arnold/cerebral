@@ -72,6 +72,23 @@ func main() {
 
 	})
 
+	http.HandleFunc("/delete-service", func(rw http.ResponseWriter, req *http.Request) {
+		parseError := req.ParseForm()
+		if parseError != nil {
+			log.Fatal(parseError)
+		}
+
+		name := req.FormValue("name")
+
+		template := template.Must(template.ParseFiles("./templates/fragments/services.html"))
+		data, deleteError := config.DeleteServiceFromConfig(name)
+		if deleteError != nil {
+			log.Fatal(deleteError)
+		}
+
+		template.Execute(rw, data)
+	})
+
 	log.Println("Cerebral running on localhost:" + port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }

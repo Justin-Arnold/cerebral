@@ -10,6 +10,14 @@
             call dialog.showModal()
         end"
         >⚙︎</span>
+        <span class="absolute top-0 right-0 p-2 text-xl bg-black/20 rounded-bl-2xl hover:bg-red-200"
+        _="
+        on click halt the event
+        set dialog to #deleteDialog{{.Name}}
+        if dialog does not match @open
+            call dialog.showModal()
+        end"
+        >🗑️</span>
     </a>
     <dialog id="editDialog{{.Name}}" class="p-4 bg-slate-600/80 rounded-lg w-80 z-[999] text-white space-y-4">
         <h3 class="text-lg">Edit Service</h3>
@@ -28,8 +36,28 @@
                 <input name="url" value={{.URL}} class="text-black rounded p-1"/>
             </label>
             <div class="flex gap-2 items-center justify-center">
-                <button type="button" _="on click set dialog to #editDialog{{.Name}} then call dialog.close()" class="rounded bg-slate-800 mt-4 p-1 flex-1">Cancel</button>
+                <button 
+                    type="button" 
+                    _="on click set dialog to #editDialog{{.Name}} then call dialog.close()" 
+                    class="rounded bg-slate-800 mt-4 p-1 flex-1">Cancel</button>
                 <button type="submit" _="on click set dialog to #editDialog{{.Name}} then call dialog.close()" class="rounded bg-slate-900 mt-4 p-1 flex-1">Save</button>
+            </div>
+        </form>
+    </dialog>
+    <dialog id="deleteDialog{{.Name}}" class="p-4 bg-slate-600 rounded-lg w-80 z-[999] text-white space-y-4">
+        <h3 class="text-lg">Are you sure you wish to remove {{.Name}}?</h3>
+        <form 
+            hx-post="/delete-service"
+            hx-target="#services"
+            class="flex flex-col gap-2"
+        >   
+            <input class="hidden" name="name" value="{{.Name}}">
+            <div class="flex gap-2 items-center justify-center">
+                <button 
+                    type="button"
+                    _="on click set dialog to #deleteDialog{{.Name}} then call dialog.close()" 
+                    class="rounded bg-slate-800 mt-4 p-1 flex-1">Cancel</button>
+                <button type="submit" _="on click set dialog to #deleteDialog{{.Name}} then call dialog.close()" class="rounded bg-slate-900 mt-4 p-1 flex-1">Delete</button>
             </div>
         </form>
     </dialog>

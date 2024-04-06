@@ -92,3 +92,36 @@ func EditServiceInConfig(oldName string, name string, url string) (*Config, erro
 
 	return config, nil
 }
+
+func DeleteServiceFromConfig(name string) (*Config, error) {
+	// Load in current config
+	config, configError := LoadConfig("config.toml")
+	if configError != nil {
+		return nil, configError
+	}
+
+	// Get matching service
+	serviceIndex := slices.IndexFunc(config.Services, func(service Service) bool { return service.Name == name })
+	if serviceIndex == -1 {
+		return nil, nil
+	}
+
+	// Remove the service
+	config.Services = append(config.Services[:serviceIndex], config.Services[serviceIndex+1:]...)
+
+	// Open the file in write mode (overwriting existing content)
+	file, err := os.OpenFile("config.toml", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	// Encode and write the updated configuration directly
+	encoder := toml.NewEncoder(file)
+	err = encoder.Encode(config)
+	if err != nil {
+		return nil, err
+	}
+
+	return config, nil
+}
