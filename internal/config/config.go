@@ -16,9 +16,40 @@ type Service struct {
 	URL  string `toml:"url"`
 }
 
-func LoadConfig(filename string) (*Config, error) {
+type EditServiceData struct {
+	OldName string
+	Name    string
+	URL     string
+}
+
+func CreateNewConfig(filePath string) (*os.File, error) {
+	// Create File
+	configFile, createFileError := os.Create(filePath)
+	if createFileError != nil {
+		return nil, createFileError
+	}
+
+	// Define Blank Config
+	config := Config{
+		Services: []Service{},
+	}
+
+	// Write initial configuration to file using TOML encoding
+	if err := toml.NewEncoder(configFile).Encode(config); err != nil {
+		return nil, err
+	}
+
+	// Ensure to close the file after writing
+	if err := configFile.Close(); err != nil {
+		return nil, err
+	}
+
+	return configFile, nil
+}
+
+func LoadConfig(filePath string) (*Config, error) {
 	var config Config
-	_, decodeError := toml.DecodeFile(filename, &config)
+	_, decodeError := toml.DecodeFile(filePath, &config)
 	if decodeError != nil {
 		return nil, decodeError
 	}
@@ -26,7 +57,25 @@ func LoadConfig(filename string) (*Config, error) {
 	return &config, nil
 }
 
-func UpdateConfig(filename, name, url string) (*Config, error) {
+func WriteConfig(filePath string, config *Config) error {
+	// 4. Open the file in write mode (overwriting existing content)
+	file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	// 5. Encode and write the updated configuration directly
+	encoder := toml.NewEncoder(file)
+	err = encoder.Encode(config)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func AddServiceToConfig(filename, name, url string) (*Config, error) {
 	// 1. Load existing configuration
 	config, err := LoadConfig(filename)
 	if err != nil {
@@ -39,63 +88,43 @@ func UpdateConfig(filename, name, url string) (*Config, error) {
 	// 3. Append the new service to the slice
 	config.Services = append(config.Services, newService)
 
-	// 4. Open the file in write mode (overwriting existing content)
-	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	// 5. Encode and write the updated configuration directly
-	encoder := toml.NewEncoder(file)
-	err = encoder.Encode(config)
-	if err != nil {
-		return nil, err
-	}
+	// Write
+	WriteConfig(filename, config)
 
 	return config, nil
 }
 
-func EditServiceInConfig(oldName string, name string, url string) (*Config, error) {
+func EditServiceInConfig(filePath string, data EditServiceData) (*Config, error) {
 	// Load in current config
-	config, configError := LoadConfig("config.toml")
+	config, configError := LoadConfig(filePath)
 	if configError != nil {
 		return nil, configError
 	}
 
 	// Get matching service
-	serviceIndex := slices.IndexFunc(config.Services, func(service Service) bool { return service.Name == oldName })
+	serviceIndex := slices.IndexFunc(config.Services, func(service Service) bool { return service.Name == data.OldName })
 	if serviceIndex == -1 {
 		return nil, nil
 	}
 
 	// Update Existing Service Info
 	updatedService := config.Services[serviceIndex]
-	updatedService.Name = name
-	updatedService.URL = url
+	updatedService.Name = data.Name
+	updatedService.URL = data.URL
 
 	config.Services[serviceIndex] = updatedService
 
-	// Open the file in write mode (overwriting existing content)
-	file, err := os.OpenFile("config.toml", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	// Encode and write the updated configuration directly
-	encoder := toml.NewEncoder(file)
-	err = encoder.Encode(config)
-	if err != nil {
-		return nil, err
+	writeError := WriteConfig(filePath, config)
+	if writeError != nil {
+		return nil, writeError
 	}
 
 	return config, nil
 }
 
-func DeleteServiceFromConfig(name string) (*Config, error) {
+func DeleteServiceFromConfig(fileName string, name string) (*Config, error) {
 	// Load in current config
-	config, configError := LoadConfig("config.toml")
+	config, configError := LoadConfig(fileName)
 	if configError != nil {
 		return nil, configError
 	}
@@ -110,18 +139,7 @@ func DeleteServiceFromConfig(name string) (*Config, error) {
 	config.Services = append(config.Services[:serviceIndex], config.Services[serviceIndex+1:]...)
 
 	// Open the file in write mode (overwriting existing content)
-	file, err := os.OpenFile("config.toml", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	// Encode and write the updated configuration directly
-	encoder := toml.NewEncoder(file)
-	err = encoder.Encode(config)
-	if err != nil {
-		return nil, err
-	}
+	WriteConfig(fileName, config)
 
 	return config, nil
 }

@@ -43,7 +43,7 @@ func main() {
 		url := req.FormValue("url")   // Access the "url" field
 
 		tmpl := template.Must(template.ParseFiles("./templates/fragments/services.html"))
-		data, err := config.UpdateConfig("config.toml", name, url)
+		data, err := config.AddServiceToConfig("config.toml", name, url)
 
 		if err != nil {
 			log.Fatal(err)
@@ -63,7 +63,13 @@ func main() {
 		url := req.FormValue("url")
 
 		template := template.Must(template.ParseFiles("./templates/fragments/services.html"))
-		data, editError := config.EditServiceInConfig(oldName, name, url)
+		editData := config.EditServiceData{
+			OldName: oldName,
+			Name:    name,
+			URL:     url,
+		}
+
+		data, editError := config.EditServiceInConfig("config.toml", editData)
 		if editError != nil {
 			log.Fatal(editError)
 		}
@@ -81,7 +87,7 @@ func main() {
 		name := req.FormValue("name")
 
 		template := template.Must(template.ParseFiles("./templates/fragments/services.html"))
-		data, deleteError := config.DeleteServiceFromConfig(name)
+		data, deleteError := config.DeleteServiceFromConfig("config.toml", name)
 		if deleteError != nil {
 			log.Fatal(deleteError)
 		}
