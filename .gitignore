@@ -1,0 +1,5 @@
+# Ignore Config File
+config.toml
+
+# Ignore Built Binary
+cerebral
