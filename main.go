@@ -15,6 +15,16 @@ func main() {
 		log.Printf("defaulting to port %s", port)
 	}
 
+	_, err := config.LoadConfig("config.toml")
+	if err != nil && os.IsNotExist(err) {
+		_, createErr := config.CreateNewConfig("config.toml")
+		if createErr != nil {
+			log.Fatal(createErr)
+		} else {
+			log.Print("No config detected. New config  created.")
+		}
+	}
+
 	http.Handle("/static/",
 		http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
