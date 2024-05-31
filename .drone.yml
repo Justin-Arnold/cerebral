@@ -1,16 +1,29 @@
 kind: pipeline
 type: docker
-name: Test Build
+name: default
 
 steps:
   - name: test
     image: golang:1.22
     commands:
       - go test
-      - go run main.go
+
+  - name: build
+    image: golang:1.22
+    commands:
+      - go build -o myapp .
+
+  - name: run
+    image: golang:1.22
+    commands:
+      - ./myapp
+    ports:
+      - 8080:8080
+    detach: true
 
 trigger:
   event:
     - push
   branch:
     - main
+
