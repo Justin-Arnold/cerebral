@@ -6,6 +6,7 @@ steps:
   - name: test
     image: golang:1.18
     commands:
+      - go install
       - go test
       - go run main.go
 
