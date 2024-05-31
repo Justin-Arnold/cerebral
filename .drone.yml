@@ -1,5 +1,5 @@
 kind: pipeline
-type: docker
+type: exec
 name: default
 
 steps:
@@ -17,8 +17,6 @@ steps:
     image: golang:1.22
     commands:
       - ./myapp
-    ports:
-      - 8080
     detach: true
 
 trigger:
