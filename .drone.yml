@@ -4,9 +4,8 @@ name: Test Build
 
 steps:
   - name: test
-    image: golang:1.18
+    image: golang:1.22
     commands:
-      - go install
       - go test
       - go run main.go
 
