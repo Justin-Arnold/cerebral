@@ -1,5 +1,5 @@
 kind: pipeline
-type: exec
+type: docker
 name: default
 
 steps:
@@ -15,6 +15,21 @@ steps:
 
   - name: run
     image: golang:1.22
+
+trigger:
+  event:
+    - push
+  branch:
+    - main
+
+---
+
+kind: pipeline
+type: exec
+name: deploy
+
+steps:
+  - name: deploy
     commands:
       - ./myapp
     detach: true
@@ -24,4 +39,3 @@ trigger:
     - push
   branch:
     - main
-
