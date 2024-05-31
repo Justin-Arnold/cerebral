@@ -106,5 +106,5 @@ func main() {
 	})
 
 	log.Println("Cerebral running on localhost:" + port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Fatal(http.ListenAndServe("0.0.0.0:"+port, nil))
 }
