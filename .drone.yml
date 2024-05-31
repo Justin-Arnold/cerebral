@@ -1,0 +1,30 @@
+kind: pipeline
+type: docker
+name: default
+
+steps:
+  - name: clone
+    image: plugins/git
+    settings:
+      depth: 1
+
+  - name: test
+    image: golang:1.18
+    commands:
+      - go test ./...
+
+  - name: build
+    image: golang:1.18
+    commands:
+      - go build -o myapp .
+
+  - name: run
+    image: golang:1.18
+    commands:
+      - ./myapp
+
+trigger:
+  event:
+    - push
+  branch:
+    - main
