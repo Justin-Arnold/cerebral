@@ -1,41 +1,23 @@
 kind: pipeline
-type: docker
+type: exec
 name: default
 
 steps:
   - name: test
-    image: golang:1.22
     commands:
       - go test
 
   - name: build
-    image: golang:1.22
     commands:
       - go build -o myapp .
 
   - name: run
-    image: golang:1.22
-
-trigger:
-  event:
-    - push
-  branch:
-    - main
-
----
-
-kind: pipeline
-type: exec
-name: deploy
-
-steps:
-  - name: deploy
     commands:
       - ./myapp
     detach: true
-
 trigger:
   event:
     - push
   branch:
     - main
+
