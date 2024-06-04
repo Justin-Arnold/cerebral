@@ -22,7 +22,9 @@ steps:
         from_secret: docker_username
       password:
         from_secret: docker_password
-
+      dockerfile: ./dockerfile   # Specify the Dockerfile path if it's not in the default location
+      context: .
+  
   - name: deploy
     image: plugins/docker
     settings:
