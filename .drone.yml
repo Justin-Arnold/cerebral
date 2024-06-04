@@ -30,8 +30,6 @@ steps:
     volumes:
       - name: dockersock
         path: /var/run/docker.sock
-    environment:
-      - DOCKER_HOST=unix:///var/run/docker.sock
     commands:
       - docker pull jadev118/cerebral:latest
       - docker run -d --name cerebral --rm -p 8080:8080 jadev118/cerebral:latest
