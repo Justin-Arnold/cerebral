@@ -26,19 +26,20 @@ steps:
       context: .
   
   - name: deploy
-    image: plugins/docker
-    settings:
-      repo: jadev118/cerebral
-      username:
-        from_secret: docker_username
-      password:
-        from_secret: docker_password
+    image: docker:latest
     volumes:
       - name: dockersock
         path: /var/run/docker.sock
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
     commands:
-      - sudo docker pull jadev118/cerebral:latest
-      - sudo docker run -d --name cerebral --rm -p 8080:8080 jadev118/cerebral:latest
+      - docker pull jadev118/cerebral:latest
+      - docker run -d --name cerebral --rm -p 8080:8080 jadev118/cerebral:latest
+
+volumes:
+  - name: dockersock
+    host:
+      path: /var/run/docker.sock
 
 trigger:
   branch:
