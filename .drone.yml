@@ -1,23 +1,44 @@
 kind: pipeline
-type: exec
+type: docker
 name: default
 
 steps:
   - name: test
+    image: golang:1.22
     commands:
       - go test
 
   - name: build
+    image: golang:1.22
     commands:
-      - go build -o myapp .
+      - go build -o app .
 
-  - name: run
+  - name: publish
+    image: plugins/docker
+    settings:
+      repo: jadev118/cerebral
+      tags: latest
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+
+  - name: deploy
+    image: plugins/docker
+    settings:
+      repo: jadev118/cerebral
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
     commands:
-      - ./myapp
-    detach: true
+      - docker pull jadev118/cerebral:latest
+      - docker run -d --name cerebral --rm -p 8080:8080 jadev118/cerebral:latest
+
 trigger:
-  event:
-    - push
   branch:
     - main
+  event:
+    - push
+    - pull_request
 
