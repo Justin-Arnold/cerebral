@@ -33,6 +33,9 @@ steps:
         from_secret: docker_username
       password:
         from_secret: docker_password
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
     commands:
       - docker pull jadev118/cerebral:latest
       - docker run -d --name cerebral --rm -p 8080:8080 jadev118/cerebral:latest
