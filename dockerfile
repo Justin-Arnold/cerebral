@@ -27,6 +27,8 @@ WORKDIR /root/
 COPY --from=build /app/main .
 # Copy the templates directory into the container
 COPY --from=build /app/templates ./templates
+# Copy the static directory into the container
+COPY --from=build /app/static ./static
 
 # Expose port 8080 to the outside world
 EXPOSE 8080
