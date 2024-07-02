@@ -15,9 +15,9 @@ func main() {
 		log.Printf("defaulting to port %s", port)
 	}
 
-	_, err := config.LoadConfig("config.toml")
+	_, err := config.LoadConfig("/config/config.toml")
 	if err != nil && os.IsNotExist(err) {
-		_, createErr := config.CreateNewConfig("config.toml")
+		_, createErr := config.CreateNewConfig("/config/config.toml")
 		if createErr != nil {
 			log.Fatal(createErr)
 		} else {
