@@ -54,7 +54,7 @@ func main() {
 
 	http.HandleFunc("/services", func(w http.ResponseWriter, r *http.Request) {
 		tmpl := template.Must(template.ParseFiles("./templates/fragments/services.html"))
-		data, err := config.LoadConfig("config.toml")
+		data, err := config.LoadConfig(configPath)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -72,7 +72,7 @@ func main() {
 		url := req.FormValue("url")   // Access the "url" field
 
 		tmpl := template.Must(template.ParseFiles("./templates/fragments/services.html"))
-		data, err := config.AddServiceToConfig("config.toml", name, url)
+		data, err := config.AddServiceToConfig(configPath, name, url)
 
 		if err != nil {
 			log.Fatal(err)
@@ -98,7 +98,7 @@ func main() {
 			URL:     url,
 		}
 
-		data, editError := config.EditServiceInConfig("config.toml", editData)
+		data, editError := config.EditServiceInConfig(configPath, editData)
 		if editError != nil {
 			log.Fatal(editError)
 		}
@@ -116,7 +116,7 @@ func main() {
 		name := req.FormValue("name")
 
 		template := template.Must(template.ParseFiles("./templates/fragments/services.html"))
-		data, deleteError := config.DeleteServiceFromConfig("config.toml", name)
+		data, deleteError := config.DeleteServiceFromConfig(configPath, name)
 		if deleteError != nil {
 			log.Fatal(deleteError)
 		}
