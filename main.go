@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 )
 
 func main() {
@@ -15,15 +16,33 @@ func main() {
 		log.Printf("defaulting to port %s", port)
 	}
 
-	_, err := config.LoadConfig("./config/config.toml")
-	if err != nil && os.IsNotExist(err) {
-		_, createErr := config.CreateNewConfig("./config/config.toml")
-		if createErr != nil {
-			log.Fatal(createErr)
-		} else {
-			log.Print("No config detected. New config created.")
-		}
-	}
+
+	configDir := "./config"
+    	configPath := filepath.Join(configDir, "config.toml")
+
+    	// Check if config directory exists, if not create it
+    	if _, err := os.Stat(configDir); os.IsNotExist(err) {
+        	err = os.MkdirAll(configDir, 0755)
+        	if err != nil {
+            		log.Fatalf("Failed to create config directory: %v", err)
+        	}	
+        	log.Printf("Created config directory: %s", configDir)
+    	}
+
+    	// Now check for the config file
+    	_, err := config.LoadConfig(configPath)
+    	if err != nil {
+        	if os.IsNotExist(err) {
+            		_, createErr := config.CreateNewConfig(configPath)
+            		if createErr != nil {
+                		log.Fatalf("Failed to create new config: %v", createErr)
+            		} else {
+                		log.Print("No config detected. New config created.")
+            		}
+        	} else {
+            		log.Fatalf("Error loading config: %v", err)
+        	}
+    	}
 
 	http.Handle("/static/",
 		http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
