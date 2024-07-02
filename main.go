@@ -21,7 +21,7 @@ func main() {
 		if createErr != nil {
 			log.Fatal(createErr)
 		} else {
-			log.Print("No config detected. New config  created.")
+			log.Print("No config detected. New config created.")
 		}
 	}
 
